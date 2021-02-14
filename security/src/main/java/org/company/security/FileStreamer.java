@@ -14,18 +14,24 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class FileStreamer implements Streamer {
-    private static final String ENCRYPTED_FILES_PATH = "/Users/ajabassov/Downloads/fileprotector/client/";
-    private static final String DECRYPTED_FILES_PATH = "/Users/ajabassov/Downloads/fileprotector/client/";
     private static final String ENCRYPTED_FILE_EXTENSION = ".enc";
     private static final String DECRYPTED_FILE_EXTENSION = ".dec";
     
     private final Encryptor encoder = new FileEncryptor();
     private final Decryptor decoder = new FileDecryptor();
     
+    private final String encryptedFilesPath;
+    private final String decryptedFilesPath;
+    
+    public FileStreamer(String encryptedFilesPath, String decryptedFilesPath) {
+        this.encryptedFilesPath = encryptedFilesPath;
+        this.decryptedFilesPath = decryptedFilesPath;
+    }
+    
     @Override
     public File encryptAndSave(File inputFile, X509Certificate encryptionCertificate)
             throws IOException, CMSException, CertificateEncodingException {
-        File encryptedFile = new File(ENCRYPTED_FILES_PATH + inputFile.getName() + ENCRYPTED_FILE_EXTENSION);
+        File encryptedFile = new File(encryptedFilesPath + inputFile.getName() + ENCRYPTED_FILE_EXTENSION);
         try(
                 InputStream inputStream = new FileInputStream(inputFile);
                 OutputStream encryptedOutputStream = encoder.encrypt(encryptedFile, encryptionCertificate)
@@ -45,7 +51,7 @@ public class FileStreamer implements Streamer {
                     .filter(part -> !part.equals("enc"))
                     .collect(Collectors.joining("."));
     
-            String decryptedFile = DECRYPTED_FILES_PATH + fileNameWithRemovedExtension + DECRYPTED_FILE_EXTENSION;
+            String decryptedFile = decryptedFilesPath + fileNameWithRemovedExtension + DECRYPTED_FILE_EXTENSION;
             Files.copy(inputStream, Paths.get(decryptedFile), StandardCopyOption.REPLACE_EXISTING);
             
             return new File(decryptedFile);

@@ -1,4 +1,4 @@
-package org.company;
+package org.company.security.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

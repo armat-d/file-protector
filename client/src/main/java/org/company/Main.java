@@ -4,6 +4,7 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.company.security.FileStreamer;
 import org.company.security.Streamer;
+import org.company.security.utils.SecurityUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 public class Main {
+    private static final String ENCRYPTED_FILES_PATH = "/Users/ajabassov/Downloads/fileprotector/client/";
+    private static final String DECRYPTED_FILES_PATH = "/Users/ajabassov/Downloads/fileprotector/client/";
+    
     public static void main(String[] args)
             throws CertificateException, NoSuchProviderException, KeyStoreException,
             IOException, UnrecoverableEntryException, NoSuchAlgorithmException, CMSException, URISyntaxException {
@@ -24,7 +28,7 @@ public class Main {
         Security.addProvider(new BouncyCastleProvider());
     
         final HttpClient client = new HttpClient();
-        final Streamer streamer = new FileStreamer();
+        final Streamer streamer = new FileStreamer(ENCRYPTED_FILES_PATH, DECRYPTED_FILES_PATH);
         final SecurityUtils securityUtils = new SecurityUtils();
         
         if (params.getAction().equals("upload")) {
